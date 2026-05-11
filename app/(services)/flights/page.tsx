@@ -7,14 +7,16 @@ interface FlightsSearchParams {
   date?: string;
 }
 
-export default function FlightsPage({
+export default async function FlightsPage({
   searchParams,
 }: {
   searchParams?: FlightsSearchParams;
 }) {
-  const from = searchParams?.from?.toUpperCase() || "";
-  const to = searchParams?.to?.toUpperCase() || "";
-  const date = searchParams?.date || "your selected date";
+  const params = await searchParams;
+
+  const from = params?.from?.toUpperCase() || "";
+  const to = params?.to?.toUpperCase() || "";
+  const date = params?.date || "your selected date";
 
   return (
       <div className="w-full h-[100vh] bg-[#F7F5F1] gap-10 flex flex-row justify-center items-start">
