@@ -1,6 +1,6 @@
 "use client";
 
-import { Plane, ShieldCheck, Clock3 ,ChartGantt } from "lucide-react";
+import { Plane, ShieldCheck, Clock3, ChartGantt } from "lucide-react";
 
 export default function WhyChooseUs() {
     return (
@@ -10,14 +10,14 @@ export default function WhyChooseUs() {
             <div className="text-center max-w-2xl mx-auto mb-14">
                 <div className="bg-[#EEE9DF] inline-flex items-center gap-2 px-3 py-1 font-semibold rounded-full text-sm">
                     <Plane size={16} />
-                    Why travelers choose Aerolink
+                    Why travelers choose CheapFlightWorld
                 </div>
 
-                <h2 className="mt-3 text-[2.5rem] font-black leading-tight text-black">
+                <h1 className="font-black text-5xl leading-tight">
                     Everything you need to plan beautifully
-                </h2>
+                </h1>
 
-                <p className="mt-4 text-[#6B7280] text-sm leading-relaxed">
+                <p className="text-[#6B7280] mt-4 text-md leading-relaxed">
                     From destination discovery to booking confidence, every section is built to help visitors
                     move from inspiration to reservation without friction.
                 </p>
@@ -31,7 +31,7 @@ export default function WhyChooseUs() {
 
                     <div>
                         <div className="flex gap-2 items-center">
-                    <ChartGantt size={16} />  <p>Simple planning flow</p></div>
+                            <ChartGantt size={16} />  <p>Simple planning flow</p></div>
                         <h3 className="mt-4 text-4xl font-bold text-black">
                             Plan the full journey in three easy
                             steps                        </h3>
@@ -43,37 +43,45 @@ export default function WhyChooseUs() {
                     </div>
 
                     {/* 3 boxes */}
-                    <div className="grid grid-cols-3 gap-3 mt-6">
-                        <div className="bg-white rounded-xl px-4 flex flex-col gap-1 py-2 text-start">
-                            <div className="w-8 h-8 flex items-center justify-center bg-[#C89B3C]
-                             rounded-full text-white text-sm font-semibold">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 mt-8">
+
+                        <div className="bg-white rounded-2xl px-5 py-5 flex flex-col gap-3">
+                            <div className="w-9 h-9 flex items-center justify-center bg-[#C89B3C] rounded-full text-white text-sm font-semibold">
                                 01
-                            </div>                            <p className="font-bold">Choose a place</p>
-                            <p className="text-[#6B7280]">Browse destinations,
-                                compare vibes, and
-                                discover where your next
-                                trip should begin.</p>
+                            </div>
+                            <p className="font-semibold text-base leading-tight">
+                                Choose a place
+                            </p>
+                            <p className="text-sm text-[#6B7280] leading-relaxed">
+                                Browse destinations, compare vibes, and discover where your next trip should begin.
+                            </p>
                         </div>
-                        <div className="bg-white rounded-xl px-4 flex flex-col gap-1 py-2 text-start">
-                            <div className="w-8 h-8 flex items-center justify-center bg-[#C89B3C] rounded-full text-white text-sm font-semibold">
+
+                        <div className="bg-white rounded-2xl px-5 py-5 flex flex-col gap-3">
+                            <div className="w-9 h-9 flex items-center justify-center bg-[#C89B3C] rounded-full text-white text-sm font-semibold">
                                 02
-                            </div>                            <p className="font-bold">Pick a package</p>
-                            <p className="text-[#6B7280]">Browse destinations,
-                                Select curated stays, add
-                                activities, and lock in an
-                                itinerary that fits your
-                                pace.</p>
+                            </div>
+                            <p className="font-semibold text-base leading-tight">
+                                Pick a package
+                            </p>
+                            <p className="text-sm text-[#6B7280] leading-relaxed">
+                                Select curated stays, add activities, and lock in an itinerary that fits your pace.
+                            </p>
                         </div>
-                        <div className="bg-white rounded-xl px-4 flex flex-col gap-1 py-2 text-start">
-                            <div className="w-8 h-8 flex items-center justify-center bg-[#C89B3C] rounded-full text-white text-sm font-semibold">
+
+                        <div className="bg-white rounded-2xl px-5 py-5 flex flex-col gap-3">
+                            <div className="w-9 h-9 flex items-center justify-center bg-[#C89B3C] rounded-full text-white text-sm font-semibold">
                                 03
-                            </div>                            <p className="font-bold">Travel with ease"</p>
-                            <p className="text-[#6B7280]">Browse destinations,
-                                Get confirmations,
-                                support, and a polished
-                                experience from booking
-                                to landing.</p>
-                        </div>                    </div>
+                            </div>
+                            <p className="font-semibold text-base leading-tight">
+                                Travel with ease
+                            </p>
+                            <p className="text-sm text-[#6B7280] leading-relaxed">
+                                Get confirmations, support, and a polished experience from booking to landing.
+                            </p>
+                        </div>
+
+                    </div>
                 </div>
 
                 {/* RIGHT */}

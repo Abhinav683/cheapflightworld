@@ -1,6 +1,6 @@
 "use client";
-
-import SearchBar from "./home/search-bar";
+import { usePathname } from "next/navigation";
+import TravelPayoutSearchBar from "./TravelpayoutSearchBar";
 
 import {
   Carousel,
@@ -12,44 +12,57 @@ import {
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star } from "lucide-react";
-
-type CommonPageProps = {
+import { Star, MoveRight } from "lucide-react";
+import path from "path";
+type PageSection<T> = {
+  heading: string;
+  subHeading?: string;
+  data: T[];
+};
+type CommonPageProps<T = unknown> = {
   title: string;
   subtitle?: string;
   image?: string;
   trend?: string;
   subTrend?: string;
-  trendData?: Array<{
+  url?: string;
+  trendData?: {
     id: number;
     name: string;
     location: string;
     price: string;
     rating: string;
     image: string;
-  }>;
+  }[];
+  pageData?: PageSection<T>;
 };
 
-export default function CommonPage({
+
+
+export default function CommonPage<T>({
   title,
   subtitle,
   image,
   trend,
   subTrend,
   trendData = [],
-}: CommonPageProps) {
+  pageData,
+  url,
+}: CommonPageProps<T>) {
+  const pathname = usePathname();
+  console.log(pathname, "page pathname");
   return (
-    <div className="w-full bg-white flex flex-col items-center justify-center">
+    <div className="w-full bg-white flex flex-col  items-center justify-center">
       {/* Hero Section */}
       {image ? (
         <div className="relative w-full">
           <img
             src={image}
             alt={title}
-            className="w-full h-[520px] object-cover"
+            className="w-full h-130 object-cover"
           />
 
-          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute " />
 
           <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center text-white">
             <h1 className="text-4xl sm:text-5xl font-bold">{title}</h1>
@@ -73,11 +86,8 @@ export default function CommonPage({
         </div>
       )}
 
-      {/* Search Bar */}
-      <div className="relative -mt-16 z-20 w-full flex justify-center px-4">
-        <SearchBar />
-      </div>
-
+    { url && <TravelPayoutSearchBar url={url} />}
+    { trend && <>
       {/* Trending Section */}
       {trendData.length > 0 && (
         <section className="w-full max-w-7xl px-4 py-12">
@@ -92,81 +102,112 @@ export default function CommonPage({
               </p>
             )}
           </div>
- <Carousel className="w-full  ">
-      <CarouselContent className="-ml-1">
-        {trendData.map((item) => (
-         <CarouselItem
-  key={item.id}
-  className="basis-[85%] sm:basis-1/2 lg:basis-1/4"
->
-  <div className="p-1 h-full">
-    <Card className="transition-all duration-300 hover:-translate-y-1 p-2 cursor-pointer">
-      
-      {/* Image */}
-      <CardContent className=" flex flex-col gap-4 p-0">
-          <img
-            src={item.image}
-            alt={item.name}
-            className="block h-[190px] w-full object-cover rounded-lg transition-transform duration-500 group-hover:scale-105"
-          />
+          <Carousel className="w-full  ">
+            <CarouselContent className="-ml-1">
+              {trendData.map((item) => (
+                <CarouselItem
+                  key={item.id}
+                  className="basis-[85%] sm:basis-1/2 lg:basis-1/4"
+                >
+                  <div className="p-1 h-full">
+                    <Card className="transition-all duration-300 shadow-sm hover:-translate-y-1 p-2 cursor-pointer">
 
-          {/* Rating */}
-          <div className="absolute top-3 right-3 flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 shadow-sm backdrop-blur">
-            <Star
-              size={12}
-              fill="black"
-              className="text-black"
-            />
+                      {/* Image */}
+                      <CardContent className=" flex flex-col gap-4 p-0">
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="block h-47.5 w-full object-cover rounded-lg transition-transform duration-500 group-hover:scale-105"
+                        />
 
-            <span className="text-xs font-semibold">
-              {item.rating}
-            </span>
-          </div>
+                        {/* Rating */}
+                        <div className="absolute top-3 right-3 flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 shadow-sm backdrop-blur">
+                          <Star
+                            size={12}
+                            fill="black"
+                            className="text-black"
+                          />
 
-        {/* Content */}
-        <div className="flex flex-col gap-2">
-          <div>
-            <h3 className="text-lg font-semibold tracking-tight line-clamp-1">
-              {item.name}
-            </h3>
+                          <span className="text-xs font-semibold">
+                            {item.rating}
+                          </span>
+                        </div>
 
-            <p className="text-sm text-muted-foreground line-clamp-1">
-              {item.location}
-            </p>
-          </div>
+                        {/* Content */}
+                        <div className="flex flex-col gap-1">
+                          <div>
+                            <h3 className="text-lg font-semibold tracking-tight line-clamp-1">
+                              {item.name}
+                            </h3>
 
-          {/* Price + Button */}
-          <div className="mt-2 flex items-end justify-between">
-            <div className="flex flex-col">
-              <span className="text-[11px] text-muted-foreground">
-                Starting from
-              </span>
+                            <p className="text-sm text-muted-foreground line-clamp-1">
+                              {item.location}
+                            </p>
+                          </div>
 
-              <div className="flex items-end gap-1">
-                <span className="text-xl font-bold">
-                  {item.price}
-                </span>
+                          {/* Price + Button */}
+                          <div className="flex items-end justify-between">
+                            <div className="flex flex-col">
 
-                <span className="mb-[2px] text-xs text-muted-foreground">
-                  / night
-                </span>
-              </div>
-            </div>
 
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  </div>
-</CarouselItem>
-        ))}
-      </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
-    </Carousel>
-        
+                              <div className="flex items-end gap-1">
+                                <span className="text-xl font-bold">
+                                  {item.price}
+                                </span>
+
+                                <span className="mb-0.5 text-xs text-muted-foreground">
+                                  / night
+                                </span>
+                              </div>
+                            </div>
+
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+
         </section>
       )}
+
+
+      <div className="bg-[#EEE9DF] w-full flex mt-20 justify-center items-center flex-col gap-2 py-10 px-4 text-center">
+        <h3 className="font-bold text-5xl">{pageData?.heading}</h3>
+        <p className="text-gray-500 my-3">{pageData?.subHeading}</p>
+
+        <div className=" w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 my-6 justify-items-center">
+          {
+            pageData?.data?.map((item) => {
+              return (
+                <div key={item.id} className="bg-white w-[80%]  m-2 p-4 rounded-lg  flex items-center justify-between">
+                  {pathname === "/flights" && (
+                    <>
+                      <span>  {item.form} </span>
+                      <MoveRight size={16} className="inline-block text-gray-400" />
+                      <span> {item.to}</span>
+                      <span className="text-gray-400 text-xs">
+                        From {item.price}
+                      </span>
+                    </>)}
+
+                  {(pathname === "/vacations" || pathname === "/hotels") && (
+                    <div className="flex flex-col">
+                      <span className="font-bold">{item.city}</span>
+                      <span className="text-gray-400">{item.package}</span>
+                    </div>
+                  )}
+                </div>
+              )
+            })
+          }
+        </div>
+      </div></>}
     </div>
   );
 }

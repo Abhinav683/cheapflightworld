@@ -15,6 +15,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { Funnel   } from "lucide-react";
+import { useRouter } from "next/navigation"; 
 interface FlightData {
   id: string;
   airline: string;
@@ -43,7 +44,8 @@ export default function Flight({ searchParams }: FlightProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string>("Waiting to fetch flight data...");
-
+  const router = useRouter();
+  
   useEffect(() => {
     console.log("Flight component mounted with searchParams:", searchParams);
     setStatusMessage("Flight component mounted");
@@ -199,9 +201,11 @@ export default function Flight({ searchParams }: FlightProps) {
             {/* Price */}
             <div className="flex flex-col items-center gap-2 w-full md:w-auto">
               <p className="text-lg sm:text-xl font-bold text-gray-800">{flight.price}</p>
-              <button className="w-full md:w-auto bg-black text-white px-5 py-2 rounded-full cursor-pointer shadow-lg text-sm sm:text-base hover:bg-gray-800 transition">
-                Book Now
-              </button>
+              <button className="w-full md:w-auto bg-black text-white px-5 py-2 rounded-full 
+              cursor-pointer shadow-lg text-sm sm:text-base hover:bg-gray-800 transition"
+              onClick={() => router.push(`flight-checkout`)}>
+                Select      
+                        </button>
             </div>
           </div>
         </div>

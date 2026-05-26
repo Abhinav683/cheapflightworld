@@ -1,6 +1,6 @@
 "use client";
 
-import { Plane, Menu, X ,Bed,TreePalm  ,CarFront } from "lucide-react";
+import { Plane, Menu, X ,Bed,TreePalm  ,CarFront ,Repeat } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -12,11 +12,11 @@ export function Navbar() {
   const pathname = usePathname();
 
   const navItems = [
-    { name: "Flights", href: "/flights" , logo :<Plane size={16}/> },
+    // { name: "Flights", href: "/flights" , logo :<Plane size={16}/> },
     { name: "Hotels", href: "/hotels" , logo :<Bed size={16}/> },
     { name: "Vacations", href: "/vacations" , logo :<TreePalm size={16}/> },
     { name: "Car rental", href: "/car-rental" , logo :<CarFront size={16}/> },
-    { name: "About", href: "/about" } ,
+    { name: "Transfers", href: "/transfers" , logo :<Repeat  size={16}/> },
   ];
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export function Navbar() {
     <div
       className={`fixed top-0 w-full z-50 px-4 sm:px-6 lg:px-12 py-4 transition-all duration-300 ${
         scrolled
-          ? "bg-white/70 backdrop-blur-md shadow-md"
+          ? "bg-white/50 backdrop-blur-lg shadow-md"
           : "bg-transparent"
       }`}
     >
@@ -55,8 +55,8 @@ export function Navbar() {
                   href={item.href}
                   className={`flex whitespace-nowrap  flex-shrink-0 items-center gap-1.5 transition-colors ${
                     isActive
-                      ? "text-black font-semibold"
-                      : "text-gray-400 hover:text-black"
+                      ? "text-black font-semibold "
+                      : "text-gray-500 hover:text-black"
                   }`}
                 >
                     {item.logo && <span>{item.logo}</span>}
@@ -68,7 +68,9 @@ export function Navbar() {
         </ul>
 
         {/* CTA */}
-        <button className="bg-black whitespace-nowrap rounded-full text-white px-5 py-2 cursor-pointer text-sm sm:text-base">
+        <button className="bg-black whitespace-nowrap rounded-full
+         text-white px-5 py-2 cursor-pointer text-sm sm:text-base shadow-none" 
+          >
           Let's Fly
         </button>
 

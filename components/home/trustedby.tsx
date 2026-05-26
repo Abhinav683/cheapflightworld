@@ -32,7 +32,8 @@ export function TrustedBy() {
         },
     ];
   return (
-    <section className="w-full my-15 ">
+    <section className="w-full my-15   ">
+      
       <div className="max-w-7xl mx-auto px-4 flex flex-wrap justify-center gap-8 opacity-70">
         {brands.map((brand, i) => (
             

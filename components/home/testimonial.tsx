@@ -49,7 +49,7 @@ export function Testimonial() {
         {testimonials.map((item, index) => (
           <div
             key={index}
-            className="p-6 rounded-2xl bg-[#FFFCF7] shadow-[0_6px_20px_rgba(0,0,0,0.05)]"
+            className="p-6 rounded-2xl bg-[#FFFCF7]"
           >
             {/* Text */}
                           <span className="text-[#C89B3C] font-black text-[2.5rem]  ">

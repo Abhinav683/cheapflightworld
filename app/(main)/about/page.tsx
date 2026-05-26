@@ -30,9 +30,32 @@ const values = [
     logo: <Leaf />
   },
 ]
+
+const leadership = [
+  {
+    name:"Elena Rostova",
+    role:"Founder & CEO",
+    image:"/person1.jpg"
+  },
+  {
+    name:"Marcus Sterling",
+    role:"Head of Operations",
+    image:"/person2.jpg"
+  },
+  {
+    name:"Sarah Lin",
+    role:"Chief Experience Officer",
+    image:"/person3.jpg"
+  },
+  {
+    name:"David Okoye",
+    role:"Global Director of Partnerships",
+    image:"/person4.jpg"
+  },
+]
 export default function AboutPage() {
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full flex flex-col items-center mb-10">
 
       <section className="w-full bg-[#F7F5F1] py-20 flex flex-col items-center text-center px-6">
         <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
@@ -105,7 +128,7 @@ export default function AboutPage() {
             <Card key={i} className="rounded-2xl  border-none shadow-sm">
               <CardContent className="px-4 flex flex-col gap-1">
 
-                <div className="bg-[#EEE9DF]  text-[#ffc01d] w-fit p-1 rounded-lg ">
+                <div className="bg-[#EEE9DF]   text-[#ffc01d] w-fit p-1 rounded-lg ">
                   {value.logo}
                 </div>
 
@@ -133,16 +156,16 @@ export default function AboutPage() {
             <p>The visionaries dedicated to perfecting your travel experience.</p>
           </div>
           <div className="max-w-6xl mx-auto grid md:grid-cols-4 gap-8">
-            {[1, 2, 3, 4].map((_, i) => (
-              <div className=" text-center">
+            {leadership.map((person:any) => (
+              <div className=" text-center" key={person.role}>
                 <img
-                  src="/hotel.jpg"
-                  alt="team"
+                  src={person.image}
+                  alt={person.name}
                   className="object-cover rounded-lg"
                 />
-                <h3 className="font-semibold text-2xl my-1">John Doe</h3>
-                <p className="text-muted-foreground text-sm">
-                  Product Designer
+                <h3 className="font-semibold text-2xl my-1">{person.name}</h3>
+                <p className="text-sm text-[#ffc01d]">
+                  {person.role}
                 </p>
               </div>
             ))}
@@ -150,17 +173,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="py-20 text-center px-6">
-        <h2 className="text-3xl font-semibold mb-4">
-          Ready to explore the world?
-        </h2>
-        <p className="text-muted-foreground mb-6">
-          Book flights and start your journey today.
-        </p>
-        <Button size="lg" className="rounded-full px-8">
-          Get Started
-        </Button>
-      </section>
+     
 
     </div>
   )

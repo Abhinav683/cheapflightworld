@@ -1,7 +1,9 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import SearchBar from "@/components/home/search-bar";
+import { useRouter } from "next/navigation";
 export function HeroSection() {
+  const router = useRouter();
   return (
     <section className="relative w-full h-screen">
 
@@ -45,7 +47,7 @@ export function HeroSection() {
               size="lg"
               variant="outline"
               className="rounded-full px-6 sm:px-8 bg-transparent text-white border-white hover:bg-white hover:text-black"
-            >
+             >
               Let's Fly
             </Button>
           </div>

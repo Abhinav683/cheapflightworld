@@ -7,17 +7,13 @@ export default function FlyingPlane({ totalTime }: { totalTime: string }) {
   return (
     <div className="w-full flex flex-col items-center flex-1">
 
-      {/* Flight Path */}
-      <div className="w-full relative flex items-center">
+       <div className="w-full relative flex items-center">
 
-        {/* Left Dot (Departure) */}
-        <div className="w-2.5 h-2.5 bg-gray-400 rounded-full z-10" />
+         <div className="w-2.5 h-2.5 bg-gray-400 rounded-full z-10" />
 
-        {/* Dashed Line */}
-        <div className="flex-1 border-t-2 border-dashed border-gray-300 relative mx-1">
+         <div className="flex-1 border-t-2 border-dashed border-gray-300 relative mx-1">
 
-          {/* Animated Plane */}
-          <motion.div
+           <motion.div
             className="absolute -top-[23px]"
             initial={{ left: "0%" }}
             animate={{ left:  "97%" }}
@@ -32,8 +28,7 @@ export default function FlyingPlane({ totalTime }: { totalTime: string }) {
 
         </div>
 
-        {/* Right Dot (Arrival) */}
-        <div className="w-2.5 h-2.5 bg-gray-400 rounded-full z-10" />
+         <div className="w-2.5 h-2.5 bg-gray-400 rounded-full z-10" />
       </div>
 
      

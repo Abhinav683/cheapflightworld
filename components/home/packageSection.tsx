@@ -39,11 +39,11 @@ export function PackagesSection() {
           <Plane  size={16} />
           Traveler stories
         </div>
-          <h2 className="mt-3 text-[2.8rem] font-black leading-tight text-black">
+        <h1 className="font-black text-5xl leading-tight">
             Popular packages for your <br /> next escape
-          </h2>
+          </h1>
 
-          <p className="mt-4 text-[#6B7280] text-sm leading-relaxed">
+        <p className="text-[#6B7280] mt-4 text-md leading-relaxed">
             Handpicked itineraries designed for couples, families, and solo travelers who want premium
             stays, smooth transfers, and memorable local experiences.
           </p>
