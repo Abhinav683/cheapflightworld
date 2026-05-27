@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { verifyAdminSessionToken } from "@/lib/auth";
 
 // CREATE SLUG
 function generateSlug(title: string): string {
@@ -14,6 +15,35 @@ function generateSlug(title: string): string {
 // CREATE BLOG
 export async function POST(request: NextRequest) {
   try {
+    const sessionToken = request.cookies.get("admin_session")?.value;
+    const session = sessionToken ? verifyAdminSessionToken(sessionToken) : null;
+
+    if (!session) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Unauthorized",
+        },
+        { status: 401 }
+      );
+    }
+
+    const adminUser = await prisma.adminUser.findUnique({
+      where: {
+        id: session.userId,
+      },
+    });
+
+    if (!adminUser) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Unauthorized",
+        },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
 
     const {

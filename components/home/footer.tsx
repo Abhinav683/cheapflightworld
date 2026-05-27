@@ -33,9 +33,9 @@ export function Footer() {
                 Careers
               </li>
 
-              <li className="hover:text-black cursor-pointer transition">
+               <Link href="/blog" className="hover:text-black cursor-pointer transition">
                 Blog
-              </li>
+              </Link>
 
               <li className="hover:text-black cursor-pointer transition">
                 Press

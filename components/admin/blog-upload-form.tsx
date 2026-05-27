@@ -294,22 +294,9 @@ export default function BlogUploadForm() {
 
   return (
     <section className="w-full px-4 py-10 sm:px-6 lg:px-8">
-      <Card className="mx-auto max-w-7xl overflow-hidden rounded-[2rem] border-0 bg-white shadow-2xl">
+      <Card className="mx-auto max-w-7xl overflow-hidden rounded-[2rem] border-0 bg-white shadow-xl">
         {/* HEADER */}
-        <div className="border-b border-slate-100 bg-gradient-to-r from-slate-900 to-slate-800 p-8 text-white">
-          <div className="flex items-center gap-4">
-            <div className="rounded-2xl bg-white/10 p-4 backdrop-blur-sm">
-              <Sparkles className="h-8 w-8" />
-            </div>
-
-            <div>
-              <h1 className="text-3xl font-bold">Production Blog CMS</h1>
-              <p className="mt-1 text-slate-300">
-                Create SEO optimized blogs with rich text editor.
-              </p>
-            </div>
-          </div>
-        </div>
+  
 
         <div className="p-6 sm:p-8 lg:p-10">
           {/* ALERT */}

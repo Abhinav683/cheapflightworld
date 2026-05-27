@@ -1,24 +1,50 @@
-import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
+import { verifyAdminSessionToken } from "@/lib/auth";
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { slug: string } }
 ) {
   try {
-    const { id } = params;
+    const sessionToken = request.cookies.get("admin_session")?.value;
+    const session = sessionToken ? verifyAdminSessionToken(sessionToken) : null;
 
-    if (!id) {
+    if (!session) {
       return NextResponse.json(
-        { error: "Blog ID is required" },
+        {
+          error: "Unauthorized",
+        },
+        { status: 401 }
+      );
+    }
+
+    const adminUser = await prisma.adminUser.findUnique({
+      where: {
+        id: session.userId,
+      },
+    });
+
+    if (!adminUser) {
+      return NextResponse.json(
+        {
+          error: "Unauthorized",
+        },
+        { status: 401 }
+      );
+    }
+
+    const { slug } = params;
+
+    if (!slug) {
+      return NextResponse.json(
+        { error: "Blog slug is required" },
         { status: 400 }
       );
     }
 
     const blog = await prisma.blog.delete({
-      where: { id },
+      where: { slug },
     });
 
     return NextResponse.json(blog);
@@ -31,8 +57,6 @@ export async function DELETE(
       { error: "Failed to delete blog" },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }
 

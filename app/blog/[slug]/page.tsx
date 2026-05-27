@@ -1,18 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { use } from "react";
-
 import {
     ArrowLeft,
     CalendarDays,
-    Clock3,
     Loader2,
-    Share2,
     User2,
 } from "lucide-react";
+import { use } from "react";
 
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 interface Blog {
     id: string;
@@ -23,7 +21,6 @@ interface Blog {
     thumbnail?: string;
     createdAt: string;
     author?: string;
-    readingTime?: number;
 }
 
 export default function ReadBlogPage({
@@ -33,57 +30,57 @@ export default function ReadBlogPage({
 }) {
     const { slug } = use(params);
     const [blog, setBlog] = useState<Blog | null>(null);
-
+    const [readMore, setReadMore] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-
+    const [content, setContent] = useState("");
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         fetchBlog();
-    }, []);
+    }, [slug]);
 
     const fetchBlog = async () => {
         try {
             setIsLoading(true);
-        
-        const response = await fetch(`/api/blogs/${slug}`);
-            console.log(response)
-            if (!response.ok) {
-                throw new Error("Failed to fetch blog");
-            }
+
+            const response = await fetch(`/api/blogs/${slug}`);
+            if (!response.ok) throw new Error("Failed to fetch blog");
 
             const result = await response.json();
+            const data: Blog = result.data;
 
-            setBlog(result.data);
+            setBlog(data);
+
+            setContent(data.content.substring(0, 1000));
+            setReadMore(false);
         } catch (err) {
-            setError(
-                err instanceof Error
-                    ? err.message
-                    : "Something went wrong"
-            );
+            setError(err instanceof Error ? err.message : "Something went wrong");
         } finally {
             setIsLoading(false);
         }
     };
 
+    const readMoreHandler = (): void => {
+        const newValue = !readMore;
+        setReadMore(newValue);
+
+        setContent(
+            newValue
+                ? blog?.content || ""
+                : blog?.content?.substring(0, 1000) || ""
+        );
+    };
+
     if (isLoading) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-[#f7f7f5]">
-                <Loader2 className="h-10 w-10 animate-spin text-black" />
+            <div className="flex min-h-screen items-center justify-center">
+                <Loader2 className="h-10 w-10 animate-spin" />
             </div>
         );
     }
 
     if (error || !blog) {
-        return (
-            <div className="flex min-h-screen items-center justify-center bg-[#f7f7f5] px-4">
-                <div className="rounded-3xl border border-slate-200 bg-white p-10 shadow-sm">
-                    <p className="text-lg font-medium text-red-500">
-                        {error || "Blog not found"}
-                    </p>
-                </div>
-            </div>
-        );
+        return <div>{error || "Blog not found"}</div>;
     }
 
     return (
@@ -101,32 +98,14 @@ export default function ReadBlogPage({
                     {/* OVERLAY */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/10" />
 
-                    {/* TOP NAV */}
-                    <div className="absolute left-0 right-0 top-0 z-20 px-4 sm:px-6 lg:px-10 py-6">
-                        <div className="mx-auto flex max-w-7xl items-center justify-between">
-                            <Link
-                                href="/blogs"
-                                className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 px-5 py-3 text-sm font-medium text-white transition-all duration-300 hover:bg-white/20"
-                            >
-                                <ArrowLeft className="h-4 w-4" />
 
-                                Back to Blogs
-                            </Link>
-
-                            <button className="flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 px-5 py-3 text-sm font-medium text-white transition-all duration-300 hover:bg-white/20">
-                                <Share2 className="h-4 w-4" />
-
-                                Share
-                            </button>
-                        </div>
-                    </div>
 
                     {/* CONTENT */}
                     <div className="absolute inset-0 z-10 flex items-end">
                         <div className="w-full px-4 sm:px-6 lg:px-10 pb-14">
-                            <div className="mx-auto max-w-5xl">
+                            <div className=" relative bottom-18 flex gap-3 flex-col mx-auto max-w-5xl">
                                 {/* BADGE */}
-                                <div className="mb-6 inline-flex items-center rounded-full bg-white/10 backdrop-blur-md border border-white/20 px-5 py-2 text-sm font-medium text-white">
+                                <div className="inline-flex w-fit items-center rounded-full bg-white/10 backdrop-blur-md border border-white/20 px-5 py-2 text-sm font-medium text-white">
                                     Featured Article
                                 </div>
 
@@ -136,12 +115,12 @@ export default function ReadBlogPage({
                                 </h1>
 
                                 {/* EXCERPT */}
-                                <p className="mt-6 max-w-3xl text-lg leading-8 text-white/80">
+                                <p className="max-w-3xl text-lg leading-8 text-white/80">
                                     {blog.excerpt}
                                 </p>
 
                                 {/* META */}
-                                <div className="mt-8 flex flex-wrap items-center gap-6 text-white/80">
+                                <div className="flex flex-wrap items-center gap-6 text-white/80">
                                     <div className="flex items-center gap-2">
                                         <User2 className="h-4 w-4" />
 
@@ -164,13 +143,8 @@ export default function ReadBlogPage({
                                         </span>
                                     </div>
 
-                                    <div className="flex items-center gap-2">
-                                        <Clock3 className="h-4 w-4" />
 
-                                        <span className="text-sm">
-                                            {blog.readingTime || 5} min read
-                                        </span>
-                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -217,50 +191,20 @@ export default function ReadBlogPage({
                                         </p>
                                     </div>
 
-                                    <div className="rounded-2xl bg-white px-4 py-3 border border-slate-200">
-                                        <p className="text-xs text-slate-500">
-                                            Reading Time
-                                        </p>
 
-                                        <p className="mt-1 text-sm font-semibold">
-                                            {blog.readingTime || 5} mins
-                                        </p>
-                                    </div>
                                 </div>
                             </div>
 
-                            {/* BLOG CONTENT */}
+                            BLOG CONTENT
                             <div
-                                className="
-                                    prose 
-                                    prose-slate 
-                                    prose-lg 
-                                    max-w-none
-                                    
-                                    prose-headings:font-bold
-                                    prose-headings:tracking-tight
-                                    
-                                    prose-h1:text-5xl
-                                    prose-h2:text-4xl
-                                    prose-h3:text-3xl
-                                    
-                                    prose-p:text-slate-700
-                                    prose-p:leading-8
-                                    
-                                    prose-a:text-black
-                                    
-                                    prose-img:rounded-3xl
-                                    
-                                    prose-blockquote:border-l-black
-                                    prose-blockquote:bg-slate-50
-                                    prose-blockquote:rounded-r-2xl
-                                    prose-blockquote:px-6
-                                    prose-blockquote:py-2
-                                "
                                 dangerouslySetInnerHTML={{
-                                    __html: blog.content,
+                                    __html: content,
                                 }}
                             />
+
+                            <Button onClick={readMoreHandler} className="rounded-full p-5 cursor-pointer mt-3">
+                                {readMore ? "Show Less..." : "Read More..."}
+                            </Button>
 
                             {/* FOOTER */}
                             <div className="mt-16 border-t border-slate-200 pt-10">
@@ -277,7 +221,7 @@ export default function ReadBlogPage({
                                     </div>
 
                                     <Link
-                                        href="/blogs"
+                                        href="/blog"
                                         className="inline-flex items-center gap-2 rounded-full bg-black px-6 py-4 text-sm font-semibold text-white transition-all duration-300 hover:bg-slate-800"
                                     >
                                         Explore More Blogs
