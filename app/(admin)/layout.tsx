@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { verifyAdminSessionToken } from "@/lib/auth";
-
+import { SessionProvider } from "next-auth/react";
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const cookieStore = await cookies();
   const token = cookieStore.get("admin_session")?.value;
@@ -23,5 +23,8 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     redirect("/admin/login");
   }
 
-  return <>{children}</>;
+  return
+   <SessionProvider>
+  {children}
+</SessionProvider>;
 }
