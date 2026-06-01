@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import SearchBar from "@/components/home/search-bar";
 import { useRouter } from "next/navigation";
 export function HeroSection() {
   const router = useRouter();
@@ -54,9 +53,7 @@ export function HeroSection() {
         </div>
 
         {/* Search */}
-        <div className="pb-4 sm:pb-6">
-          <SearchBar />
-        </div>
+       
       </div>
     </section>
   );
