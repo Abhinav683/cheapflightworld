@@ -8,6 +8,8 @@ import { PackagesSection } from "@/components/home/packageSection"
 import { Destination } from "@/components/home/destination"
 import WhyChooseUs from "@/components/home/whyChooseUs"
 import TravelPayoutSearchBar from "@/components/TravelpayoutSearchBar"
+import { Footer } from "@/components/home/footer"
+
 export default function HomePage() {
 
  
@@ -25,7 +27,8 @@ export default function HomePage() {
       <WhyChooseUs />
       <Testimonial />
       <BookJourneyCard />
+      <Footer />
 
     </main>
   )    
-} 
+}

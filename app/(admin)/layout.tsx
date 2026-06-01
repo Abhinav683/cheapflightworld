@@ -23,8 +23,9 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     redirect("/admin/login");
   }
 
-  return
-   <SessionProvider>
-  {children}
-</SessionProvider>;
+  return (
+    <SessionProvider>
+      {children}
+    </SessionProvider>
+  );
 }
