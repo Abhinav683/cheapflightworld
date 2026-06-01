@@ -130,7 +130,6 @@ model Blog {
   thumbnail String?
   author    String
   published Boolean    @default(false)
-  views     Int        @default(0)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 }

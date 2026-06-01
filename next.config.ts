@@ -1,10 +1,15 @@
-import "dotenv/config"; 
-import { defineConfig, env } from "prisma/config";
+import type { NextConfig } from "next";
 
-export default defineConfig({
-  schema: "prisma/schema.prisma",
-
-  datasource: {
-    url: env("DATABASE_URL"),
+const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+           },
+    ],
   },
-});
+};
+
+
+module.exports = nextConfig;

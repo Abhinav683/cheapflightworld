@@ -203,6 +203,7 @@ function BlogEditor({ content, onChange }: BlogEditorProps) {
 // -----------------------------
 
 export default function BlogUploadForm() {
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [content, setContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{
@@ -375,19 +376,88 @@ export default function BlogUploadForm() {
                 </div>
 
                 {/* THUMBNAIL */}
-                <div className="space-y-3 lg:col-span-2">
-                  <Label className="text-sm font-semibold">
-                    Thumbnail Image URL
-                  </Label>
-                  <div className="relative">
-                    <ImageIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
-                    <Input
-                      {...register("thumbnail")}
-                      placeholder="https://example.com/image.jpg"
-                      className="h-14 rounded-2xl border-slate-200 bg-white pl-12"
-                    />
-                  </div>
-                </div>
+            <div className="space-y-4 lg:col-span-2">
+  <Label className="text-sm font-semibold">
+    Blog Thumbnail
+  </Label>
+
+  <Input
+    type="hidden"
+    {...register("thumbnail")}
+  />
+
+  <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-6">
+    <input
+      type="file"
+      id="thumbnailUpload"
+      accept="image/*"
+      className="hidden"
+      onChange={async (e) => {
+        const file = e.target.files?.[0];
+
+        if (!file) return;
+
+        try {
+          setUploadingImage(true);
+
+          const formData = new FormData();
+
+          formData.append("file", file);
+
+          const response = await fetch("/api/upload", {
+            method: "POST",
+            body: formData,
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            setValue("thumbnail", data.url);
+          }
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setUploadingImage(false);
+        }
+      }}
+    />
+
+    <label
+      htmlFor="thumbnailUpload"
+      className="flex cursor-pointer flex-col items-center justify-center gap-4"
+    >
+      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
+        {uploadingImage ? (
+          <Loader2 className="h-7 w-7 animate-spin text-slate-600" />
+        ) : (
+          <Upload className="h-7 w-7 text-slate-600" />
+        )}
+      </div>
+
+      <div className="text-center">
+        <p className="text-base font-semibold text-slate-900">
+          {uploadingImage
+            ? "Uploading image..."
+            : "Upload Blog Thumbnail"}
+        </p>
+
+        <p className="mt-1 text-sm text-slate-500">
+          PNG, JPG, WEBP supported
+        </p>
+      </div>
+    </label>
+
+    {watch("thumbnail") && (
+      <div className="mt-6 overflow-hidden rounded-3xl border border-slate-200">
+        <img
+          src={watch("thumbnail")}
+          alt="Thumbnail Preview"
+          className="h-[260px] w-full object-cover"
+        />
+      </div>
+    )}
+  </div>
+</div>
 
                 {/* EXCERPT */}
                 <div className="space-y-3 lg:col-span-2">

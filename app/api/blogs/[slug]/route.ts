@@ -4,17 +4,19 @@ import { verifyAdminSessionToken } from "@/lib/auth";
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const sessionToken = request.cookies.get("admin_session")?.value;
-    const session = sessionToken ? verifyAdminSessionToken(sessionToken) : null;
+    const sessionToken =
+      request.cookies.get("admin_session")?.value;
+
+    const session = sessionToken
+      ? verifyAdminSessionToken(sessionToken)
+      : null;
 
     if (!session) {
       return NextResponse.json(
-        {
-          error: "Unauthorized",
-        },
+        { error: "Unauthorized" },
         { status: 401 }
       );
     }
@@ -27,14 +29,12 @@ export async function DELETE(
 
     if (!adminUser) {
       return NextResponse.json(
-        {
-          error: "Unauthorized",
-        },
+        { error: "Unauthorized" },
         { status: 401 }
       );
     }
 
-    const { slug } = params;
+    const { slug } = await params;
 
     if (!slug) {
       return NextResponse.json(
@@ -50,16 +50,20 @@ export async function DELETE(
     return NextResponse.json(blog);
   } catch (error: any) {
     if (error.code === "P2025") {
-      return NextResponse.json({ error: "Blog not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Blog not found" },
+        { status: 404 }
+      );
     }
+
     console.error("Error deleting blog:", error);
+
     return NextResponse.json(
       { error: "Failed to delete blog" },
       { status: 500 }
     );
   }
-}
-
+} 
 
 
 
@@ -98,4 +102,40 @@ export async function GET(
             { status: 500 }
         );
     }
+}
+
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  try {
+    const { slug } = await params;
+
+    const body = await request.json();
+
+    const updatedBlog = await prisma.blog.update({
+      where: {
+        slug,
+      },
+      data: {
+        title: body.title,
+        author: body.author,
+        content: body.content,
+      },
+    });
+
+    return NextResponse.json(updatedBlog);
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        error: "Failed to update blog",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
 }

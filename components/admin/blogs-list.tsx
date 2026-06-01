@@ -4,14 +4,26 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Trash2, Eye, Edit2, Loader2 } from "lucide-react";
+import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import Image from "next/image";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter
+} from "@/components/ui/dialog"
 
 interface Blog {
   id: string;
   title: string;
   slug: string;
   author: string;
+  thumbnail: string;
   published: boolean;
-  views: number;
   createdAt: string;
 }
 
@@ -24,40 +36,48 @@ export function BlogsList() {
     fetchBlogs();
   }, []);
 
-const fetchBlogs = async () => {
-  try {
-    setIsLoading(true);
-
-    const response = await fetch("/api/blogs");
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch blogs");
-    }
-
-    const result = await response.json();
-
-    setBlogs(result.data || []);
-  } catch (err) {
-    setError(
-      err instanceof Error
-        ? err.message
-        : "An error occurred"
-    );
-  } finally {
-    setIsLoading(false);
-  }
-};
-  const deleteBlog = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this blog?")) return;
-
+  const fetchBlogs = async () => {
     try {
-      const response = await fetch(`/api/blogs/${id}`, {
+      setIsLoading(true);
+
+      const response = await fetch("/api/blogs");
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch blogs");
+      }
+
+      const result = await response.json();
+
+      setBlogs(result.data || []);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "An error occurred"
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const deleteBlog = async (slug: string) => {
+    try {
+      const response = await fetch(`/api/blogs/${slug}`, {
         method: "DELETE",
       });
-      if (!response.ok) throw new Error("Failed to delete blog");
-      setBlogs(blogs.filter((blog) => blog.id !== id));
+
+      if (!response.ok) {
+        throw new Error("Failed to delete blog");
+      }
+
+      setBlogs((prev) =>
+        prev.filter((blog) => blog.slug !== slug)
+      );
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to delete blog");
+      alert(
+        err instanceof Error
+          ? err.message
+          : "Failed to delete blog"
+      );
     }
   };
 
@@ -79,14 +99,28 @@ const fetchBlogs = async () => {
       </Card>
     );
   }
-
+  console.log(blogs)
   return (
-    <div className="w-full">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-2">Your Blog Posts</h2>
-        <p className="text-gray-600">
-          Total: {blogs.length} post{blogs.length !== 1 ? "s" : ""}
-        </p>
+    <div className="w-full flex flex-col justify-center items-center  ">
+
+      <div className="mb-8 flex flex-col gap-3  w-[90%] border p-4  bg-white rounded-2xl">
+        {/* LEFT */}
+        <div>
+
+          <p className="mt-1 font-bold text-xl">
+            Total Blogs : ( {blogs.length} )
+          </p>
+        </div>
+
+        {/* SEARCH */}
+        <div className="relative w-full">
+          <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Input
+            type="text"
+            placeholder="Search blogs..."
+            className="h-14 rounded-full border-slate-200 bg-white pl-11 pr-4  font-normal placeholder:font-normal placeholder:text-base shadow focus-visible:ring-1 focus-visible:ring-slate-300 "
+          />
+        </div>
       </div>
 
       {blogs.length === 0 ? (
@@ -97,70 +131,141 @@ const fetchBlogs = async () => {
           </p>
         </Card>
       ) : (
-        <div className="grid gap-4">
+        <div className="flex flex-col justify-between gap-4 w-[90%]">
           {blogs.map((blog) => (
             <Card
               key={blog.id}
-              className="p-4 md:p-6 hover:shadow-lg transition-shadow"
+              className="group p-0 overflow-hidden rounded-3xl border border-slate-200 bg-white  hover:border-slate-300 hover:shadow-[0_20px_50px_-12px_rgba(15,23,42,0.08)]"
             >
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span
-                      className={`text-xs px-2 py-1 rounded-full font-semibold ${
-                        blog.published
-                          ? "bg-green-100 text-green-800"
-                          : "bg-yellow-100 text-yellow-800"
-                      }`}
-                    >
-                      {blog.published ? "Published" : "Draft"}
-                    </span>
-                  </div>
-                  <h3 className="font-bold text-lg mb-1">{blog.title}</h3>
-                  <p className="text-sm text-gray-600 mb-2">
-                    By {blog.author} •{" "}
-                    {new Date(blog.createdAt).toLocaleDateString()}
-                  </p>
-                  <p className="text-sm text-gray-500 flex items-center gap-1">
-                    <Eye className="w-4 h-4" />
-                    {blog.views} views
-                  </p>
-                </div>
+              <div className="flex flex-col gap-6 p-3 lg:flex-row lg:items-center lg:justify-between">
 
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => window.open(`/blog/${blog.slug}`, "_blank")}
-                    className="flex items-center gap-2"
-                  >
-                    <Eye className="w-4 h-4" />
-                    View
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center gap-2"
-                    disabled
-                  >
-                    <Edit2 className="w-4 h-4" />
-                    Edit
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => deleteBlog(blog.id)}
-                    className="flex items-center gap-2"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    Delete
-                  </Button>
+                {/* LEFT */}
+                <div className="flex min-w-0 flex-1 items-start gap-10">
+
+                  {/* ICON */}
+                  <div className="relative w-[130px] overflow-hidden bg-slate-100 lg:h-auto lg:w-[100px] rounded-2xl">
+                    {blog?.thumbnail ? (
+                        <img
+                          src={blog.thumbnail}
+                          alt={blog.title}
+                          className="object-cover"
+                        />
+                        ) : (
+                        <div className="flex h-[90px] w-full items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
+                          <span className="text-sm font-medium text-slate-500">
+                            No Image
+                          </span>
+                        </div>
+                    )}
+                      </div>
+                  {/* CONTENT */}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-3">
+
+                        <h3 className="truncate text-xl font-semibold tracking-tight text-slate-900">
+                          {blog.title}
+                        </h3>
+
+                     
+                      </div>
+
+                      <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-slate-500">
+                        <span className="font-medium text-slate-700">
+                          {blog.author}
+                        </span>
+
+                        <span>•</span>
+
+                        <span>
+                          {new Date(blog.createdAt).toLocaleDateString()}
+                        </span>
+
+                        <span>•</span>
+
+                        <span className="truncate">
+                          /blog/{blog.slug}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ACTIONS */}
+                  <div className="flex items-center gap-2">
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        window.open(`/blog/${blog.slug}`, "_blank")
+                      }
+                      className="h-11 rounded-2xl border-slate-200 px-4"
+                    >
+                      <Eye className="mr-2 h-4 w-4" />
+                      View
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-11 rounded-2xl border-slate-200 px-4"
+                      onClick={() =>
+                        window.location.href = `/admin/edit/${blog.slug}`
+                      }
+                    >
+                      <Edit2 className="mr-2 h-4 w-4" />
+                      Edit
+                    </Button>
+
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          className="h-11 rounded-2xl px-4"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete
+                        </Button>
+                      </DialogTrigger>
+
+                      <DialogContent className="rounded-3xl sm:max-w-md">
+                        <DialogHeader>
+                          <DialogTitle className="text-xl font-semibold">
+                            Delete Blog?
+                          </DialogTitle>
+
+                          <DialogDescription className="pt-2 text-sm leading-6 text-slate-500">
+                            This action cannot be undone. This will permanently
+                            delete this blog post from your platform.
+                          </DialogDescription>
+                        </DialogHeader>
+
+                        <DialogFooter className="mt-4 flex-row gap-3 sm:justify-end">
+                          <Button
+                            variant="outline"
+                            className="rounded-xl"
+                          >
+                            Cancel
+                          </Button>
+
+                          <Button
+                            variant="destructive"
+                            className="rounded-xl"
+                            onClick={() => deleteBlog(blog.slug)}
+                          >
+                            Confirm Delete
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
                 </div>
-              </div>
             </Card>
           ))}
+
         </div>
       )}
+
     </div>
   );
 }
