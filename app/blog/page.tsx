@@ -16,6 +16,7 @@ interface Blog {
     title: string;
     slug: string;
     excerpt: string;
+    author?: string;
     thumbnail?: string;
     createdAt: string;
 }
