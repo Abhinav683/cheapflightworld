@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 
 import {
   Plane,
-  PlusCircle,
+  PlusCircle, 
   List,
   LogOut,
 } from "lucide-react";
