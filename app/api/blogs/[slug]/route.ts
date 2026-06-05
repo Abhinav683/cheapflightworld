@@ -120,8 +120,24 @@ export async function PUT(
       },
       data: {
         title: body.title,
+        slug: body.slug,
         author: body.author,
         content: body.content,
+        excerpt: body.excerpt,
+        thumbnail: body.thumbnail || null,
+        metaTitle: body.metaTitle || null,
+        metaDescription: body.metaDescription || null,
+        keywords: Array.isArray(body.keywords)
+          ? body.keywords
+          : [],
+        tags: Array.isArray(body.tags) ? body.tags : [],
+        ogImage: body.ogImage || null,
+        readingTime:
+          body.readingTime !== undefined
+            ? Number(body.readingTime)
+            : null,
+        featured: body.featured ?? false,
+        published: body.published ?? false,
       },
     });
 

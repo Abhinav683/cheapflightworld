@@ -18,10 +18,309 @@ import {
   Globe,
   Tags,
   User,
-  ImageIcon,
+  Upload,
   CheckCircle2,
   AlertCircle,
+  Bold,
+  Italic,
+  Strikethrough,
+  Heading1,
+  Heading2,
+  List,
+  ListOrdered,
+  Quote,
+  UnderlineIcon,
+  Link2,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
 } from "lucide-react";
+
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Underline from "@tiptap/extension-underline";
+import Highlight from "@tiptap/extension-highlight";
+import LinkExtension from "@tiptap/extension-link";
+import Image from "@tiptap/extension-image";
+import Placeholder from "@tiptap/extension-placeholder";
+import TextAlign from "@tiptap/extension-text-align";
+import OrderedList from "@tiptap/extension-ordered-list";
+import ListItem from "@tiptap/extension-list-item";
+import BulletList from "@tiptap/extension-bullet-list";
+
+// ========================================
+// EDITOR COMPONENT
+// ========================================
+
+interface BlogEditorProps {
+  content: string;
+  onChange: (content: string) => void;
+}
+
+function BlogEditor({ content, onChange }: BlogEditorProps) {
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({
+        bulletList: false,
+        orderedList: false,
+        listItem: false,
+      }),
+
+      BulletList,
+      OrderedList,
+      ListItem,
+
+      Underline,
+
+      Highlight,
+
+      LinkExtension.configure({
+        openOnClick: false,
+        autolink: true,
+        linkOnPaste: true,
+      }),
+
+      Image,
+
+      Placeholder.configure({
+        placeholder: "Write an amazing blog post...",
+      }),
+
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
+    ],
+
+    content,
+
+    immediatelyRender: false,
+
+    editorProps: {
+      attributes: {
+        class:
+          "prose prose-lg max-w-none min-h-[400px] p-6 focus:outline-none",
+      },
+    },
+
+    onUpdate({ editor }) {
+      onChange(editor.getHTML());
+    },
+  });
+
+  useEffect(() => {
+    if (editor && content === "" && editor.getHTML() !== "") {
+      editor.commands.setContent("");
+    }
+  }, [content, editor]);
+
+  if (!editor) return null;
+
+  const addLink = () => {
+    const previousUrl = editor.getAttributes("link").href;
+
+    const url = window.prompt(
+      "Enter URL",
+      previousUrl || "https://"
+    );
+
+    if (url === null) return;
+
+    if (url === "") {
+      editor
+        .chain()
+        .focus()
+        .unsetLink()
+        .run();
+
+      return;
+    }
+
+    editor
+      .chain()
+      .focus()
+      .extendMarkRange("link")
+      .setLink({
+        href: url,
+        target: "_blank",
+      })
+      .run();
+  };
+
+  return (
+    <div className="w-full overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm focus-within:ring-2 focus-within:ring-black">
+      {/* Toolbar */}
+      <div className="overflow-hidden rounded-3xl border bg-white">
+        <div className="flex flex-wrap gap-2 border-b p-3">
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor.chain().focus().toggleBold().run()
+            }
+          >
+            <Bold size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor.chain().focus().toggleItalic().run()
+            }
+          >
+            <Italic size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor.chain().focus().toggleUnderline().run()
+            }
+          >
+            <UnderlineIcon size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor.chain().focus().toggleStrike().run()
+            }
+          >
+            <Strikethrough size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor
+                .chain()
+                .focus()
+                .toggleHeading({ level: 1 })
+                .run()
+            }
+          >
+            <Heading1 size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor
+                .chain()
+                .focus()
+                .toggleHeading({ level: 2 })
+                .run()
+            }
+          >
+            <Heading2 size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor.chain().focus().toggleBulletList().run()
+            }
+          >
+            <List size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor.chain().focus().toggleOrderedList().run()
+            }
+          >
+            <ListOrdered size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor.chain().focus().toggleBlockquote().run()
+            }
+          >
+            <Quote size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={addLink}
+          >
+            <Link2 size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor
+                .chain()
+                .focus()
+                .setTextAlign("left")
+                .run()
+            }
+          >
+            <AlignLeft size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor
+                .chain()
+                .focus()
+                .setTextAlign("center")
+                .run()
+            }
+          >
+            <AlignCenter size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor
+                .chain()
+                .focus()
+                .setTextAlign("right")
+                .run()
+            }
+          >
+            <AlignRight size={16} />
+          </Button>
+        </div>
+
+        {/* Editor Space */}
+        <div onClick={() => editor.chain().focus().run()} className="cursor-text">
+          <EditorContent editor={editor} />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 interface Props {
   slug: string;
@@ -31,7 +330,6 @@ interface FormData {
   title: string;
   slug: string;
 
-  content: string;
   excerpt: string;
 
   author: string;
@@ -55,6 +353,8 @@ interface FormData {
 export default function EditBlogForm({ slug }: Props) {
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [content, setContent] = useState("");
 
   const [message, setMessage] = useState<{
     type: "success" | "error";
@@ -72,7 +372,6 @@ export default function EditBlogForm({ slug }: Props) {
     defaultValues: {
       title: "",
       slug: "",
-      content: "",
       excerpt: "",
       author: "",
       thumbnail: "",
@@ -108,7 +407,6 @@ export default function EditBlogForm({ slug }: Props) {
       reset({
         title: blog.title || "",
         slug: blog.slug || "",
-        content: blog.content || "",
         excerpt: blog.excerpt || "",
         author: blog.author || "",
         thumbnail: blog.thumbnail || "",
@@ -125,6 +423,8 @@ export default function EditBlogForm({ slug }: Props) {
         featured: blog.featured || false,
         published: blog.published || false,
       });
+
+      setContent(blog.content || "");
     } catch (error) {
       setMessage({
         type: "error",
@@ -148,6 +448,8 @@ export default function EditBlogForm({ slug }: Props) {
         },
         body: JSON.stringify({
           ...data,
+
+          content,
 
           keywords: data.keywords
             .split(",")
@@ -183,10 +485,37 @@ export default function EditBlogForm({ slug }: Props) {
       setIsUpdating(false);
     }
   };
+  const updateThumbnail = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
 
+    if (!file) return;
+
+    try {
+      setUploadingImage(true);
+
+      const formData = new FormData();
+
+      formData.append("file", file);
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setValue("thumbnail", data.url);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setUploadingImage(false);
+    }
+  }
   if (isLoading) {
     return (
-      <div className="flex min-h-[500px] items-center justify-center">
+      <div className="flex min-h-125 items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-slate-500" />
       </div>
     );
@@ -195,10 +524,10 @@ export default function EditBlogForm({ slug }: Props) {
   return (
     <section className="w-full px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl space-y-6">
-        
+
         {/* TOP BAR */}
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          
+
           <div className="flex items-center gap-4">
             <Link href="/admin">
               <Button
@@ -225,11 +554,10 @@ export default function EditBlogForm({ slug }: Props) {
         {/* ALERT */}
         {message && (
           <div
-            className={`flex items-center gap-3 rounded-2xl border px-5 py-4 ${
-              message.type === "success"
+            className={`flex items-center gap-3 rounded-2xl border px-5 py-4 ${message.type === "success"
                 ? "border-green-200 bg-green-50 text-green-700"
                 : "border-red-200 bg-red-50 text-red-700"
-            }`}
+              }`}
           >
             {message.type === "success" ? (
               <CheckCircle2 className="h-5 w-5" />
@@ -263,7 +591,7 @@ export default function EditBlogForm({ slug }: Props) {
             </div>
 
             <div className="grid gap-6 lg:grid-cols-2">
-              
+
               <div className="space-y-3 lg:col-span-2">
                 <Label>Blog Title</Label>
 
@@ -295,16 +623,59 @@ export default function EditBlogForm({ slug }: Props) {
                 </div>
               </div>
 
-              <div className="space-y-3 lg:col-span-2">
-                <Label>Thumbnail</Label>
+              <div className="space-y-4 lg:col-span-2">
+                <Label>Blog Thumbnail</Label>
 
-                <div className="relative">
-                  <ImageIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+                <Input
+                  type="hidden"
+                  {...register("thumbnail")}
+                />
 
-                  <Input
-                    {...register("thumbnail")}
-                    className="h-14 rounded-2xl pl-12"
+                <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-6">
+                  <input
+                    type="file"
+                    id="thumbnailUpload"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      updateThumbnail(e);
+                    }}
                   />
+
+                  <label
+                    htmlFor="thumbnailUpload"
+                    className="flex cursor-pointer flex-col items-center justify-center gap-4"
+                  >
+                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
+                      {uploadingImage ? (
+                        <Loader2 className="h-7 w-7 animate-spin text-slate-600" />
+                      ) : (
+                        <Upload className="h-7 w-7 text-slate-600" />
+                      )}
+                    </div>
+
+                    <div className="text-center">
+                      <p className="text-base font-semibold text-slate-900">
+                        {uploadingImage
+                          ? "Uploading image..."
+                          : "Upload Blog Thumbnail"}
+                      </p>
+
+                      <p className="mt-1 text-sm text-slate-500">
+                        PNG, JPG, WEBP supported
+                      </p>
+                    </div>
+                  </label>
+
+                  {watch("thumbnail") && (
+                    <div className="mt-6 overflow-hidden rounded-3xl border border-slate-200">
+                      <img
+                        src={watch("thumbnail")}
+                        alt="Thumbnail Preview"
+                        className="h-[260px] w-full object-cover"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -318,12 +689,9 @@ export default function EditBlogForm({ slug }: Props) {
               </div>
 
               <div className="space-y-3 lg:col-span-2">
-                <Label>Content</Label>
+                <Label>Blog Content Editor</Label>
 
-                <textarea
-                  {...register("content")}
-                  className="min-h-[400px] w-full rounded-3xl border p-5 outline-none"
-                />
+                <BlogEditor content={content} onChange={setContent} />
               </div>
             </div>
           </Card>

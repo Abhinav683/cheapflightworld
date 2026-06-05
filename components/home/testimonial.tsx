@@ -52,7 +52,7 @@ export function Testimonial() {
             className="p-6 rounded-2xl bg-[#FFFCF7]"
           >
             {/* Text */}
-                          <span className="text-[#C89B3C] font-black text-[2.5rem]  ">
+            <span className="text-[#C89B3C] font-black text-[2.5rem]  ">
                 “
               </span>
             <p className="text-[#111827] text-sm leading-relaxed ">

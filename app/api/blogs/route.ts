@@ -148,19 +148,58 @@ export async function POST(request: NextRequest) {
 }
 
 // GET BLOGS
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
+    const limit = Math.min(12, Math.max(1, parseInt(searchParams.get("limit") || "9")));
+    const searchQuery = searchParams.get("search")?.trim() || "";
+    
+    const skip = (page - 1) * limit;
+
+    // Build where clause for search
+    const whereClause = searchQuery
+      ? {
+          OR: [
+            { title: { contains: searchQuery, mode: "insensitive" as const } },
+            { excerpt: { contains: searchQuery, mode: "insensitive" as const } },
+            { content: { contains: searchQuery, mode: "insensitive" as const } },
+            { author: { contains: searchQuery, mode: "insensitive" as const } },
+            { tags: { hasSome: [searchQuery] } },
+          ],
+        }
+      : {};
+
+    // Get total count
+    const total = await prisma.blog.count({
+      where: whereClause,
+    });
+
+    // Get paginated blogs
     const blogs = await prisma.blog.findMany({
+      where: whereClause,
+      skip,
+      take: limit,
       orderBy: {
         createdAt: "desc",
       },
     });
+
+    const totalPages = Math.ceil(total / limit);
 
     return NextResponse.json(
       {
         success: true,
         results: blogs.length,
         data: blogs,
+        pagination: {
+          total,
+          page,
+          limit,
+          totalPages,
+          hasNext: page < totalPages,
+          hasPrev: page > 1,
+        },
       },
       { status: 200 }
     );

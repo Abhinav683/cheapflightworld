@@ -1,6 +1,6 @@
 "use client";
 
-import { Plane, Menu, X ,Bed,TreePalm  ,CarFront ,Repeat } from "lucide-react";
+import { Plane, Menu, X, Bed, TreePalm, CarFront, Repeat } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -13,10 +13,10 @@ export function Navbar() {
 
   const navItems = [
     // { name: "Flights", href: "/flights" , logo :<Plane size={16}/> },
-    { name: "Hotels", href: "/hotels" , logo :<Bed size={16}/> },
-    { name: "Vacations", href: "/vacations" , logo :<TreePalm size={16}/> },
-    { name: "Car rental", href: "/car-rental" , logo :<CarFront size={16}/> },
-    { name: "Transfers", href: "/transfers" , logo :<Repeat  size={16}/> },
+    { name: "Hotels", href: "/hotels", logo: <Bed size={16} /> },
+    { name: "Vacations", href: "/vacations", logo: <TreePalm size={16} /> },
+    { name: "Car rental", href: "/car-rental", logo: <CarFront size={16} /> },
+    { name: "Transfers", href: "/transfers", logo: <Repeat size={16} /> },
   ];
 
   useEffect(() => {
@@ -27,22 +27,22 @@ export function Navbar() {
 
   return (
     <div
-      className={`fixed top-0 w-full z-50 px-4 sm:px-6 lg:px-12 py-4 transition-all duration-300 ${
-        scrolled
+      className={`fixed top-0 w-full z-50 px-4 sm:px-6 lg:px-12 py-4 transition-all duration-300 ${scrolled
           ? "bg-white/50 backdrop-blur-lg shadow-md"
           : "bg-transparent"
-      }`}
+        }`}
     >
-      <div className="flex items-center justify-evenly gap-[20%] max-w-7xl mx-auto">
-
+<div className="flex  justify-between mx-auto items-center">
         {/* Logo */}
         <div
-          className="font-bold text-lg sm:text-2xl whitespace-nowrap  flex-shrink-0  cursor-pointer"
+          className="font-bold text-lg sm:text-xl whitespace-nowrap  shrink-0  cursor-pointer"
           onClick={() => router.push("/")}
         >
           <Plane className="inline-block mr-2 bg-[#EEE9DF] rounded-full p-1.5" size={30} />
-          CheapflightWorld
-        </div>
+          <span className="hidden sm:inline font-bold">
+            CheapflightWorld
+          </span>       
+           </div>
 
         {/* Desktop Nav */}
         <ul className="hidden md:flex gap-6 lg:gap-8 text-sm lg:text-base">
@@ -53,13 +53,12 @@ export function Navbar() {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className={`flex whitespace-nowrap  flex-shrink-0 items-center gap-1.5 transition-colors ${
-                    isActive
+                  className={`flex whitespace-nowrap  shrink-0 items-center gap-1.5 transition-colors ${isActive
                       ? "text-black font-semibold "
                       : "text-gray-500 hover:text-black"
-                  }`}
+                    }`}
                 >
-                    {item.logo && <span>{item.logo}</span>}
+                  {item.logo && <span>{item.logo}</span>}
                   {item.name}
                 </Link>
               </li>
@@ -69,8 +68,8 @@ export function Navbar() {
 
         {/* CTA */}
         <button className="bg-black whitespace-nowrap rounded-full
-         text-white px-5 py-2 cursor-pointer text-sm sm:text-base shadow-none" 
-          >
+         text-white px-5 py-2 cursor-pointer text-sm sm:text-base shadow-none hidden md:inline md:text-sm lg:text-base"
+        >
           Let's Fly
         </button>
 
@@ -92,11 +91,10 @@ export function Navbar() {
                   <Link
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className={`flex items-center whitespace-nowrap  flex-shrink-0  gap-1.5 ${
-                      isActive
+                    className={`flex items-center whitespace-nowrap  shrink-0  gap-1.5 ${isActive
                         ? "text-black font-semibold"
                         : "text-gray-500"
-                    }`}
+                      }`}
                   >
                     {item.name}
                   </Link>

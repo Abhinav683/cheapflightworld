@@ -25,8 +25,7 @@ model Blog {
 
   author          String
 
-  thumbnail       String?
-
+  thumbnail       String? 
   metaTitle       String?
   metaDescription String?
 

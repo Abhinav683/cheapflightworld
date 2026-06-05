@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import slugify from "slugify";
-import { useEffect } from "react"; 
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,7 +17,10 @@ import {
   Upload,
   FileText,
   User,
-  ImageIcon,
+  ImagePlus,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
   Globe,
   Tags,
   Sparkles,
@@ -31,10 +34,21 @@ import {
   List,
   ListOrdered,
   Quote,
+  UnderlineIcon,
+  Link2
 } from "lucide-react";
 
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import Underline from "@tiptap/extension-underline";
+import Highlight from "@tiptap/extension-highlight";
+import Link from "@tiptap/extension-link";
+import Image from "@tiptap/extension-image";
+import Placeholder from "@tiptap/extension-placeholder";
+import TextAlign from "@tiptap/extension-text-align";
+import OrderedList from "@tiptap/extension-ordered-list";
+import ListItem from "@tiptap/extension-list-item";
+import BulletList from "@tiptap/extension-bullet-list";
 
 // -----------------------------
 // VALIDATION SCHEMA
@@ -87,19 +101,54 @@ interface BlogEditorProps {
 }
 
 function BlogEditor({ content, onChange }: BlogEditorProps) {
-  const editor = useEditor({
-    extensions: [StarterKit],
-    content: content,
-    onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
+const editor = useEditor({
+  extensions: [
+    StarterKit.configure({
+      bulletList: false,
+      orderedList: false,
+      listItem: false,
+    }),
+
+    BulletList,
+    OrderedList,
+    ListItem,
+
+    Underline,
+
+    Highlight,
+
+    Link.configure({
+      openOnClick: false,
+      autolink: true,
+      linkOnPaste: true,
+    }),
+
+    Image,
+
+    Placeholder.configure({
+      placeholder: "Write an amazing blog post...",
+    }),
+
+    TextAlign.configure({
+      types: ["heading", "paragraph"],
+    }),
+  ],
+
+  content,
+
+  immediatelyRender: false,
+
+  editorProps: {
+    attributes: {
+      class:
+        "prose prose-lg max-w-none min-h-[400px] p-6 focus:outline-none",
     },
-    editorProps: {
-      attributes: {
-        class: "prose prose-slate max-w-none min-h-[250px] p-5 focus:outline-none focus:ring-0",
-      },
-    },
-    immediatelyRender: false,
-  });
+  },
+
+  onUpdate({ editor }) {
+    onChange(editor.getHTML());
+  },
+});
 
   // Safe reset: Watch for parent form resets via useEffect
   useEffect(() => {
@@ -108,91 +157,213 @@ function BlogEditor({ content, onChange }: BlogEditorProps) {
     }
   }, [content, editor]);
 
+
   if (!editor) return null;
+
+const addLink = () => {
+  const previousUrl = editor.getAttributes("link").href;
+
+  const url = window.prompt(
+    "Enter URL",
+    previousUrl || "https://"
+  );
+
+  if (url === null) return;
+
+  if (url === "") {
+    editor
+      .chain()
+      .focus()
+      .unsetLink()
+      .run();
+
+    return;
+  }
+
+  editor
+    .chain()
+    .focus()
+    .extendMarkRange("link")
+    .setLink({
+      href: url,
+      target: "_blank",
+    })
+    .run();
+};
 
   return (
     <div className="w-full overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm focus-within:ring-2 focus-within:ring-black">
       {/* Toolbar */}
-      <div className="flex flex-wrap gap-1 border-b border-slate-200 bg-slate-50 p-2">
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          className={editor.isActive("bold") ? "bg-slate-200" : ""}
-        >
-          <Bold className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={editor.isActive("italic") ? "bg-slate-200" : ""}
-        >
-          <Italic className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleStrike().run()}
-          className={editor.isActive("strike") ? "bg-slate-200" : ""}
-        >
-          <Strikethrough className="h-4 w-4" />
-        </Button>
-        <div className="mx-1 h-6 w-[1px] bg-slate-200 self-center" />
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          className={editor.isActive("heading", { level: 1 }) ? "bg-slate-200" : ""}
-        >
-          <Heading1 className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={editor.isActive("heading", { level: 2 }) ? "bg-slate-200" : ""}
-        >
-          <Heading2 className="h-4 w-4" />
-        </Button>
-        <div className="mx-1 h-6 w-[1px] bg-slate-200 self-center" />
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={editor.isActive("bulletList") ? "bg-slate-200" : ""}
-        >
-          <List className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={editor.isActive("orderedList") ? "bg-slate-200" : ""}
-        >
-          <ListOrdered className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={editor.isActive("blockquote") ? "bg-slate-200" : ""}
-        >
-          <Quote className="h-4 w-4" />
-        </Button>
-      </div>
+      <div className="overflow-hidden rounded-3xl border bg-white">
+        <div className="flex flex-wrap gap-2 border-b p-3">
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor.chain().focus().toggleBold().run()
+            }
+          >
+            <Bold size={16} />
+          </Button>
 
-      {/* Editor Space */}
-      <div onClick={() => editor.chain().focus().run()} className="cursor-text">
-        <EditorContent editor={editor} />
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor.chain().focus().toggleItalic().run()
+            }
+          >
+            <Italic size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor.chain().focus().toggleUnderline().run()
+            }
+          >
+            <UnderlineIcon size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor.chain().focus().toggleStrike().run()
+            }
+          >
+            <Strikethrough size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor
+                .chain()
+                .focus()
+                .toggleHeading({ level: 1 })
+                .run()
+            }
+          >
+            <Heading1 size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor
+                .chain()
+                .focus()
+                .toggleHeading({ level: 2 })
+                .run()
+            }
+          >
+            <Heading2 size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor.chain().focus().toggleBulletList().run()
+            }
+          >
+            <List size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor.chain().focus().toggleOrderedList().run()
+            }
+          >
+            <ListOrdered size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor.chain().focus().toggleBlockquote().run()
+            }
+          >
+            <Quote size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={addLink}
+          >
+            <Link2 size={16} />
+          </Button>
+
+       
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor
+                .chain()
+                .focus()
+                .setTextAlign("left")
+                .run()
+            }
+          >
+            <AlignLeft size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor
+                .chain()
+                .focus()
+                .setTextAlign("center")
+                .run()
+            }
+          >
+            <AlignCenter size={16} />
+          </Button>
+
+          <Button
+            size="icon"
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              editor
+                .chain()
+                .focus()
+                .setTextAlign("right")
+                .run()
+            }
+          >
+            <AlignRight size={16} />
+          </Button>
+        </div>
+
+        {/* Editor Space */}
+        <div onClick={() => editor.chain().focus().run()} className="cursor-text">
+          <EditorContent editor={editor} />
+        </div>
       </div>
     </div>
   );
@@ -297,17 +468,16 @@ export default function BlogUploadForm() {
     <section className="w-full px-4 py-10 sm:px-6 lg:px-8">
       <Card className="mx-auto max-w-7xl overflow-hidden rounded-[2rem] border-0 bg-white shadow-xl">
         {/* HEADER */}
-  
+
 
         <div className="p-6 sm:p-8 lg:p-10">
           {/* ALERT */}
           {message && (
             <div
-              className={`mb-8 flex items-center gap-3 rounded-2xl border px-5 py-4 ${
-                message.type === "success"
+              className={`mb-8 flex items-center gap-3 rounded-2xl border px-5 py-4 ${message.type === "success"
                   ? "border-green-200 bg-green-50 text-green-700"
                   : "border-red-200 bg-red-50 text-red-700"
-              }`}
+                }`}
             >
               {message.type === "success" ? (
                 <CheckCircle2 className="h-5 w-5" />
@@ -376,88 +546,88 @@ export default function BlogUploadForm() {
                 </div>
 
                 {/* THUMBNAIL */}
-            <div className="space-y-4 lg:col-span-2">
-  <Label className="text-sm font-semibold">
-    Blog Thumbnail
-  </Label>
+                <div className="space-y-4 lg:col-span-2">
+                  <Label className="text-sm font-semibold">
+                    Blog Thumbnail
+                  </Label>
 
-  <Input
-    type="hidden"
-    {...register("thumbnail")}
-  />
+                  <Input
+                    type="hidden"
+                    {...register("thumbnail")}
+                  />
 
-  <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-6">
-    <input
-      type="file"
-      id="thumbnailUpload"
-      accept="image/*"
-      className="hidden"
-      onChange={async (e) => {
-        const file = e.target.files?.[0];
+                    <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-6">
+                    <input
+                      type="file"
+                      id="thumbnailUpload"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
 
-        if (!file) return;
+                        if (!file) return;
 
-        try {
-          setUploadingImage(true);
+                        try {
+                          setUploadingImage(true);
 
-          const formData = new FormData();
+                          const formData = new FormData();
 
-          formData.append("file", file);
+                          formData.append("file", file);
 
-          const response = await fetch("/api/upload", {
-            method: "POST",
-            body: formData,
-          });
+                          const response = await fetch("/api/upload", {
+                            method: "POST",
+                            body: formData,
+                          });
 
-          const data = await response.json();
+                          const data = await response.json();
 
-          if (data.success) {
-            setValue("thumbnail", data.url);
-          }
-        } catch (error) {
-          console.log(error);
-        } finally {
-          setUploadingImage(false);
-        }
-      }}
-    />
+                          if (data.success) {
+                            setValue("thumbnail", data.url);
+                          }
+                        } catch (error) {
+                          console.log(error);
+                        } finally {
+                          setUploadingImage(false);
+                        }
+                      }}
+                    />
 
-    <label
-      htmlFor="thumbnailUpload"
-      className="flex cursor-pointer flex-col items-center justify-center gap-4"
-    >
-      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
-        {uploadingImage ? (
-          <Loader2 className="h-7 w-7 animate-spin text-slate-600" />
-        ) : (
-          <Upload className="h-7 w-7 text-slate-600" />
-        )}
-      </div>
+                    <label
+                      htmlFor="thumbnailUpload"
+                      className="flex cursor-pointer flex-col items-center justify-center gap-4"
+                    >
+                      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
+                        {uploadingImage ? (
+                          <Loader2 className="h-7 w-7 animate-spin text-slate-600" />
+                        ) : (
+                          <Upload className="h-7 w-7 text-slate-600" />
+                        )}
+                      </div>
 
-      <div className="text-center">
-        <p className="text-base font-semibold text-slate-900">
-          {uploadingImage
-            ? "Uploading image..."
-            : "Upload Blog Thumbnail"}
-        </p>
+                      <div className="text-center">
+                        <p className="text-base font-semibold text-slate-900">
+                          {uploadingImage
+                            ? "Uploading image..."
+                            : "Upload Blog Thumbnail"}
+                        </p>
 
-        <p className="mt-1 text-sm text-slate-500">
-          PNG, JPG, WEBP supported
-        </p>
-      </div>
-    </label>
+                        <p className="mt-1 text-sm text-slate-500">
+                          PNG, JPG, WEBP supported
+                        </p>
+                      </div>
+                    </label>
 
-    {watch("thumbnail") && (
-      <div className="mt-6 overflow-hidden rounded-3xl border border-slate-200">
-        <img
-          src={watch("thumbnail")}
-          alt="Thumbnail Preview"
-          className="h-[260px] w-full object-cover"
-        />
-      </div>
-    )}
-  </div>
-</div>
+                    {watch("thumbnail") && (
+                      <div className="mt-6 overflow-hidden rounded-3xl border border-slate-200">
+                        <img
+                          src={watch("thumbnail")}
+                          alt="Thumbnail Preview"
+                          className="h-[260px] w-full object-cover"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
 
                 {/* EXCERPT */}
                 <div className="space-y-3 lg:col-span-2">

@@ -17,7 +17,7 @@ export function HeroSection() {
         className="object-cover -z-10"
       />
 
-      <div className="relative z-10 flex items-center relative bottom-28 justify-center min-h-screen px-4 sm:px-6 lg:px-8">
+      <div className=" z-10 flex items-center relative bottom-26 justify-center min-h-screen px-4 sm:px-6 lg:px-8">
 
 
           <div className="flex flex-col items-center text-center">
